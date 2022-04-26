@@ -3,54 +3,41 @@ let news = []
 let menu = document.querySelectorAll(".menu button")
 
 let searchButton = document.getElementById("search-button");
-console.log("버튼", searchButton)
 menu.forEach(menu => menu.addEventListener("click", (event) => getNewsByTopic(event)))
+let url;
 
-
-console.log("menu",menu)
-const getLatestNews = async() => { 
-    let url = new URL(
-        'https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=world&page_size=10'
-        );
+const getNews = async() => {
     let header = new Headers({
         'x-api-key': 'S2Ps336dSyQrfl6bazBEnG_WPtTul6yqJkNtPtkJgwU'
         })
     let response = await fetch(url, {headers:header})
     let data = await response.json()
     news = data.articles
-    console.log(news)
 
     render()
+}
+
+const getLatestNews = async() => { 
+url = new URL(
+        'https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=world&page_size=10'
+        );
+    getNews();
 };
 
 const getNewsByTopic = async(event) => {
-    console.log("clicked", event.target.textContent);
     let topic = event.target.textContent.toLowerCase();
-    let url = new URL(
-        `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`);
-    let header = new Headers({
-        'x-api-key': 'S2Ps336dSyQrfl6bazBEnG_WPtTul6yqJkNtPtkJgwU'
-        })
-    let response = await fetch(url, {headers:header})
-    let data = await response.json()
-    news = data.articles
-
-    render()
-
+url = new URL(
+        `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`
+        );
+    getNews();
 };
 
 const getNewsBySearch = async() => {
     let keyword = document.getElementById("search-input").value;
-    let url = new URL(
+url = new URL(
         `https://api.newscatcherapi.com/v2/search?q=${keyword}&page_size=10`
         );
-    const headers = new Headers({
-        'x-api-key': 'S2Ps336dSyQrfl6bazBEnG_WPtTul6yqJkNtPtkJgwU'
-        })
-    let response = await fetch(url, {headers})
-    let data = await response.json()
-    news = data.articles
-    render()
+    getNews();       
 };
 
 const render = () => {
@@ -73,8 +60,8 @@ const render = () => {
         }
     ).join('');
 
+document.getElementById("news-board").innerHTML = newsHTML
 
-    document.getElementById("news-board").innerHTML=newsHTML
 }
 searchButton.addEventListener("click", getNewsBySearch)
 getLatestNews();
