@@ -1,38 +1,40 @@
 
 let news = []
-let menu = document.querySelectorAll(".menu button")
+let menus = document.querySelectorAll(".menu button")
 
 let searchButton = document.getElementById("search-button");
-menu.forEach(menu => menu.addEventListener("click", (event) => getNewsByTopic(event)))
-let url;
+menus.forEach(m => m.addEventListener("click", (event) => getNewsByTopic(event)))
+let url = undefined;
 
 const getNews = async() => {
-    let header = new Headers({
+    let headers = new Headers({
         'x-api-key': 'S2Ps336dSyQrfl6bazBEnG_WPtTul6yqJkNtPtkJgwU'
         })
-    let response = await fetch(url, {headers:header})
-    let data = await response.json()
-    news = data.articles
+    let response = await fetch(url, { headers })
 
-    render()
+    let data = await response.json()
+    console.log({ data })
+    news = data?.articles || []
+    render();
 }
 
-const getLatestNews = async() => { 
+const getLatestNews = () => { 
 url = new URL(
         'https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=world&page_size=10'
         );
     getNews();
 };
 
-const getNewsByTopic = async(event) => {
+const getNewsByTopic = (event) => {
     let topic = event.target.textContent.toLowerCase();
 url = new URL(
         `https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&page_size=10&topic=${topic}`
         );
     getNews();
+    console.log({topic, url})
 };
 
-const getNewsBySearch = async() => {
+const getNewsBySearch = () => {
     let keyword = document.getElementById("search-input").value;
 url = new URL(
         `https://api.newscatcherapi.com/v2/search?q=${keyword}&page_size=10`
@@ -61,7 +63,6 @@ const render = () => {
     ).join('');
 
 document.getElementById("news-board").innerHTML = newsHTML
-
 }
 searchButton.addEventListener("click", getNewsBySearch)
 getLatestNews();
