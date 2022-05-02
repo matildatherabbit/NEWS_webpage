@@ -7,15 +7,27 @@ menus.forEach(m => m.addEventListener("click", (event) => getNewsByTopic(event))
 let url = undefined;
 
 const getNews = async() => {
-    let headers = new Headers({
-        'x-api-key': 'S2Ps336dSyQrfl6bazBEnG_WPtTul6yqJkNtPtkJgwU'
-        })
-    let response = await fetch(url, { headers })
-
-    let data = await response.json()
-    console.log({ data })
-    news = data?.articles || []
-    render();
+    try{
+        let headers = new Headers({
+            'x-api-key': 'S2Ps336dSyQrfl6bazBEnG_WPtTul6yqJkNtPtkJgwU'
+            })
+        let response = await fetch(url, { headers })
+    
+        let data = await response.json();
+        if(response.status == 200){
+            if(data.total_hits == 0){
+                throw new Error("검색된 결과값이 없습니다")
+            }
+            news = data.articles;
+            console.log(news)
+            render();
+        }else {
+            throw new Error(data.message)
+        }
+    }catch(error){
+        console.log("에러메시지:", error.message)
+        errorRender(error.message)
+    }
 }
 
 const getLatestNews = () => { 
@@ -64,5 +76,14 @@ const render = () => {
 
 document.getElementById("news-board").innerHTML = newsHTML
 }
+
+const errorRender = (message) =>{
+    let errorHTML = `</div>
+    <div class="alert alert-danger text-center" role="alert"> 
+    ${message}
+    </div>`
+    document.getElementById("news-board").innerHTML = errorHTML
+}
+
 searchButton.addEventListener("click", getNewsBySearch)
 getLatestNews();
