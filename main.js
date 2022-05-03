@@ -1,5 +1,7 @@
 
 let news = []
+let page = 1
+let total_pages = 0
 let menus = document.querySelectorAll(".menu button")
 
 let searchButton = document.getElementById("search-button");
@@ -11,16 +13,20 @@ const getNews = async() => {
         let headers = new Headers({
             'x-api-key': 'S2Ps336dSyQrfl6bazBEnG_WPtTul6yqJkNtPtkJgwU'
             })
+        url.searchParams.set("page", page);    
+        console.log("url??", url)
         let response = await fetch(url, { headers })
-    
         let data = await response.json();
         if(response.status == 200){
             if(data.total_hits == 0){
                 throw new Error("검색된 결과값이 없습니다")
             }
             news = data.articles;
+            total_pages = data.total_pages;
+            page = data.page;
             console.log(news)
             render();
+            pagination();
         }else {
             throw new Error(data.message)
         }
@@ -85,5 +91,22 @@ const errorRender = (message) =>{
     document.getElementById("news-board").innerHTML = errorHTML
 }
 
+const pagination = () => {
+    let paginationHTML = ``
+    let pageGroup = Math.ceil(page/5)
+    let lastPage = pageGroup * 5
+    let firstPage = lastPage - 4
+    for(let i = firstPage; i <= lastPage; i++){
+        paginationHTML += `<li class="page-item ${page == i ? "active" : ""}"><a class="page-link" href="#" onclick = "moveToPage(${i})">${i}</a></li>`
+    }
+
+    document.querySelector(".pagination").innerHTML = paginationHTML;
+}
+
+const moveToPage = (pageNum) => {
+    page = pageNum;
+    getNews();
+
+}
 searchButton.addEventListener("click", getNewsBySearch)
 getLatestNews();
