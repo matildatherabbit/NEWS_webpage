@@ -11,7 +11,7 @@ let url = undefined;
 const getNews = async() => {
     try{
         let headers = new Headers({
-            'x-api-key': 'S2Ps336dSyQrfl6bazBEnG_WPtTul6yqJkNtPtkJgwU'
+            'x-api-key': 'iH7B5UDo2Tb6fBEyOMXQSasffFLymxoycqzb8Z9r_UU'
             })
         url.searchParams.set("page", page);    
         console.log("url??", url)
@@ -21,6 +21,7 @@ const getNews = async() => {
             if(data.total_hits == 0){
                 throw new Error("검색된 결과값이 없습니다")
             }
+            console.log("받는 데이터 확인", data)
             news = data.articles;
             total_pages = data.total_pages;
             page = data.page;
@@ -94,8 +95,12 @@ const errorRender = (message) =>{
 const pagination = () => {
     let paginationHTML = ``
     let pageGroup = Math.ceil(page/5)
-    let lastPage = pageGroup * 5
-    let firstPage = lastPage - 4
+    let lastPage = pageGroup * 5 
+        if (lastPage > total_pages) {
+        // 마지막 그룹이 5개 이하이면
+        lastPage = total_pages;
+      }
+    let firstPage = lastPage - 4 <= 0 ? 1 : lastPage - 4; 
     for(let i = firstPage; i <= lastPage; i++){
         paginationHTML += `<li class="page-item ${page == i ? "active" : ""}"><a class="page-link" href="#" onclick = "moveToPage(${i})">${i}</a></li>`
     }
