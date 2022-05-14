@@ -97,14 +97,26 @@ const pagination = () => {
     let pageGroup = Math.ceil(page/5)
     let lastPage = pageGroup * 5 
         if (lastPage > total_pages) {
-        // 마지막 그룹이 5개 이하이면
         lastPage = total_pages;
-      }
-    let firstPage = lastPage - 4 <= 0 ? 1 : lastPage - 4; 
+        }
+    let firstPage = lastPage - 4 <= 0 ? 1 : lastPage - 4
+    
+        paginationHTML += ``
+    if (page >= 6) {
+        paginationHTML += `<li class="page-item" onclick="moveToPage(1)">
+                          <a class="page-link" href='#js-bottom'>&lt;&lt;</a></li>
+                          <li class="page-item" onclick="moveToPage(${page - 1})">
+                          <a class="page-link" href='#js-bottom'>&lt;</a></li>`;
+        }
     for(let i = firstPage; i <= lastPage; i++){
         paginationHTML += `<li class="page-item ${page == i ? "active" : ""}"><a class="page-link" href="#" onclick = "moveToPage(${i})">${i}</a></li>`
-    }
-
+        }
+    if (page < total_pages){
+        paginationHTML += `<li class="page-item" onclick="moveToPage(${page + 1})">
+                               <a class="page-link" href='#js-bottom'>&gt;</a></li>
+                               <li class="page-item" onclick="moveToPage(${total_pages})">
+                               <a class="page-link" href='#js-bottom'>&gt;&gt;</a></li>`
+         }
     document.querySelector(".pagination").innerHTML = paginationHTML;
 }
 
