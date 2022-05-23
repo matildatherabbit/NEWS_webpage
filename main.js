@@ -127,3 +127,5 @@ const moveToPage = (pageNum) => {
 }
 searchButton.addEventListener("click", getNewsBySearch)
 getLatestNews();
+
+
